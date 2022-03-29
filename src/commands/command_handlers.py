@@ -11,9 +11,8 @@ class CommandHandler:
         self.bot = bot
 
     def initialize(self):
-        bot = self.bot
 
-        @bot.command(name='snap')
+        @self.bot.command(name='snap')
         async def snap(ctx: Context, channel: discord.TextChannel = None, length: int = 200):
             messages = await channel.history(limit=length).flatten()
             mr = []
@@ -24,6 +23,6 @@ class CommandHandler:
             txt = io.StringIO("\n".join(mr))
             await ctx.author.send(file=File(fp=txt, filename="{}-{}.txt".format(channel, ctx.message.created_at)))
 
-        @bot.command(name='bing')
+        @self.bot.command(name='bing')
         async def snap(ctx: Context):
             await ctx.channel.send("bong")

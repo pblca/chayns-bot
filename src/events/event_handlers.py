@@ -7,15 +7,13 @@ class EventHandler:
         self.bot = bot
 
     def initialize(self):
-        bot = self.bot
-
-        @bot.event
+        @self.bot.event
         async def on_ready():
-            print('Logged in as {0.user}'.format(bot))
+            print('Logged in as {0.user}'.format(self.bot))
 
-        @bot.event
+        @self.bot.event
         async def on_message(message: discord.Message):
-            if message.author == bot.user:
+            if message.author == self.bot.user:
                 return
 
-            await bot.process_commands(message)
+            await self.bot.process_commands(message)
