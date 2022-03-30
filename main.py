@@ -7,4 +7,6 @@ load_dotenv()
 
 prefix = os.getenv('DISCORD_PREFIX')
 bot = BotFactory(prefix or "!")
+
 bot.start()
+

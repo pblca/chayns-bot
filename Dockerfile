@@ -4,8 +4,10 @@ ENV PYTHONUNBUFFERED True
 
 ENV APP_HOME /app
 WORKDIR $APP_HOME
-COPY . ./
+COPY requirements.txt ./requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
+
+COPY . ./
 
 CMD exec python main.py
