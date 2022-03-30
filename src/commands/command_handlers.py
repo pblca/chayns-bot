@@ -7,8 +7,9 @@ from discord.ext.commands import Context
 
 class CommandHandler:
 
-    def __init__(self, bot):
+    def __init__(self, bot, cache):
         self.bot = bot
+        self.cache = cache
 
     def initialize(self):
 
@@ -26,3 +27,16 @@ class CommandHandler:
         @self.bot.command(name='bing')
         async def snap(ctx: Context):
             await ctx.channel.send("bong")
+
+        @self.bot.command(name='cache')
+        async def cache(ctx: Context, key, val):
+            self.cache[key] = val
+
+        @self.bot.command(name='showcache')
+        async def showcache(ctx: Context):
+            await ctx.channel.send(self.cache)
+
+        @self.bot.command(name='mirror')
+        async def mirror(ctx: Context):
+            self.cache[ctx.message.channel.id] = ctx.message.channel_mentions[0].id
+
