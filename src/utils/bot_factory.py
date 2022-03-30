@@ -10,9 +10,10 @@ class BotFactory:
 
     def __init__(self, prefix: str):
         intents = discord.Intents().all()
+        self.cache: dict = {}
         self.bot = commands.Bot(command_prefix=prefix, intents=intents)
-        self.event_handlers = EventHandler(self.bot)
-        self.command_handlers = CommandHandler(self.bot)
+        self.event_handlers = EventHandler(self.bot, self.cache)
+        self.command_handlers = CommandHandler(self.bot, self.cache)
 
     def start(self):
         self.event_handlers.initialize()
