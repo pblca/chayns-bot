@@ -27,18 +27,3 @@ class CommandHandler:
         @self.bot.command(name='bing')
         async def snap(ctx: Context):
             await ctx.channel.send("bong")
-
-        @self.bot.command(name='cache')
-        async def cache(ctx: Context, key, val):
-            self.cache[key] = val
-
-        @self.bot.command(name='showcache')
-        async def showcache(ctx: Context):
-            await ctx.channel.send(self.cache)
-
-        @self.bot.command(name='mirror')
-        async def mirror(ctx: Context):
-            if 'mirror_cache' not in self.cache.keys():
-                self.cache['mirror_cache']: dict = {ctx.message.channel.id: ctx.message.channel_mentions[0].id}
-            else:
-                self.cache['mirror_cache'][ctx.message.channel.id] = ctx.message.channel_mentions[0].id
