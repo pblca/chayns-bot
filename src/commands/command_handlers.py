@@ -9,7 +9,7 @@ class CommandHandler:
 
     def __init__(self, bot, cache):
         self.bot = bot
-        self.cache = cache
+        self.cache: dict = cache
 
     def initialize(self):
 
@@ -38,5 +38,7 @@ class CommandHandler:
 
         @self.bot.command(name='mirror')
         async def mirror(ctx: Context):
-            self.cache[ctx.message.channel.id] = ctx.message.channel_mentions[0].id
-
+            if 'mirror_cache' not in self.cache.keys():
+                self.cache['mirror_cache']: dict = {ctx.message.channel.id: ctx.message.channel_mentions[0].id}
+            else:
+                self.cache['mirror_cache'][ctx.message.channel.id] = ctx.message.channel_mentions[0].id
