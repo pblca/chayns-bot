@@ -21,8 +21,11 @@ class Mirror(commands.Cog):
     async def cache(self, ctx: Context, *args):
         if len(args) == 0:
             await ctx.channel.send(self.cache)
-            return
-        self.cache[args[0]] = args[1]
+        elif len(args) == 1:
+            if args[0] in self.cache.keys():
+                await ctx.channel.send(self.cache[args[0]])
+        else:
+            self.cache[args[0]] = ' '.join(str(arg) for arg in args[1:])
 
     @commands.command(name='mirror')
     async def mirror(self, ctx: Context):

@@ -2,7 +2,7 @@ import os
 import discord
 from discord.ext import commands
 
-from mirror.mirror import Mirror
+from src.cogs.mirror.mirror import Mirror
 from src.commands.command_handlers import CommandHandler
 from src.events.event_handlers import EventHandler
 
