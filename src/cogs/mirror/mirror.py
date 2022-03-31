@@ -1,12 +1,15 @@
+import io
+
 import discord
+from discord import File
 from discord.ext import commands
 from discord.ext.commands import Context
 
 
 class Mirror(commands.Cog):
 
-    def __init__(self, bot, cache: dict):
-        self.bot = bot
+    def __init__(self, bot: commands.Bot, cache: dict):
+        self.bot: commands.Bot = bot
         self.cache: dict = cache
 
     @commands.Cog.listener()
@@ -20,12 +23,20 @@ class Mirror(commands.Cog):
     @commands.command(name='cache')
     async def cache(self, ctx: Context, *args):
         if len(args) == 0:
-            await ctx.channel.send(self.cache)
+            txt = io.StringIO(str(self.cache))
+            await ctx.channel.send(file=File(fp=txt, filename='cache.txt'))
         elif len(args) == 1:
             if args[0] in self.cache.keys():
                 await ctx.channel.send(self.cache[args[0]])
         else:
             self.cache[args[0]] = ' '.join(str(arg) for arg in args[1:])
+
+    @commands.command(name='wipe')
+    async def wipe(self, ctx: Context, *args):
+        if len(args) == 0:
+            await ctx.channel.purge(limit=1000, check=lambda m: m.author == self.bot.user)
+        else:
+            await ctx.channel.purge(limit=int(args[1]), check=lambda m: m.author.id == ctx.message.raw_mentions[0])
 
     @commands.command(name='mirror')
     async def mirror(self, ctx: Context):

@@ -2,6 +2,7 @@ import os
 import discord
 from discord.ext import commands
 
+from src.cogs.janitor.janitor import Janitor
 from src.cogs.mirror.mirror import Mirror
 from src.commands.command_handlers import CommandHandler
 from src.events.event_handlers import EventHandler
@@ -20,4 +21,5 @@ class BotFactory:
         self.event_handlers.initialize()
         self.command_handlers.initialize()
         self.bot.add_cog(Mirror(self.bot, self.cache))
+        self.bot.add_cog(Janitor(self.bot, self.cache))
         self.bot.run(os.getenv('BOT_KEY'))
