@@ -13,7 +13,7 @@ class Janitor(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        if 'janitor_cache' in self.cache.keys() and message.channel.id in self.cache['janitor_cache']:
+        if 'janitor_cache' in self.cache.keys() and message.channel.id in self.cache['janitor_cache'].keys():
             current_cache = self.cache['janitor_cache'][message.channel.id]
             current_cache['messages'].append(message.id)
             if len(current_cache['messages']) > current_cache['limit']:
@@ -24,7 +24,5 @@ class Janitor(commands.Cog):
     async def janitor(self, ctx: Context, limit=200):
         if 'janitor_cache' not in self.cache.keys():
             self.cache['janitor_cache']: dict = {ctx.message.channel.id: {'limit': limit, 'messages': deque()}}
-        elif ctx.channel.id not in self.cache['janitor_cache']:
-            self.cache['janitor_cache'] = {ctx.message.channel.id: {'limit': limit, 'messages': deque()}}
         else:
             self.cache['janitor_cache'][ctx.message.channel.id] = {'limit': limit, 'messages': deque()}
