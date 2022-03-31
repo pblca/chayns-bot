@@ -26,3 +26,5 @@ class Janitor(commands.Cog):
             self.cache['janitor_cache']: dict = {ctx.message.channel.id: {'limit': limit, 'messages': deque()}}
         elif ctx.channel.id not in self.cache['janitor_cache']:
             self.cache['janitor_cache'] = {ctx.message.channel.id: {'limit': limit, 'messages': deque()}}
+        else:
+            self.cache['janitor_cache'][ctx.message.channel.id] = {'limit': limit, 'messages': deque()}
