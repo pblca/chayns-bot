@@ -13,8 +13,8 @@ class BotFactory:
         intents = discord.Intents().all()
         self.cache: dict = {}
         self.bot = commands.Bot(command_prefix=prefix, intents=intents)
-        self.event_handlers = EventHandler(self.bot, self.cache)
-        self.command_handlers = CommandHandler(self.bot, self.cache)
+        self.event_handlers = EventHandler(self.bot)
+        self.command_handlers = CommandHandler(self.bot)
 
     def start(self):
         self.event_handlers.initialize()
