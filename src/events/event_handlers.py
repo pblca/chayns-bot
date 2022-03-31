@@ -5,8 +5,9 @@ from src.events.message_analysis import message_analysis
 
 class EventHandler:
 
-    def __init__(self, bot):
+    def __init__(self, bot, cache):
         self.bot = bot
+        self.cache: dict = cache
 
     def initialize(self):
         @self.bot.event
