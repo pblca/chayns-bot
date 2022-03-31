@@ -1,5 +1,7 @@
 import discord
 
+from src.events.message_analysis import message_analysis
+
 
 class EventHandler:
 
@@ -16,5 +18,7 @@ class EventHandler:
         async def on_message(message: discord.Message):
             if message.author == self.bot.user:
                 return
+
+            message_analysis(message)
 
             await self.bot.process_commands(message)
