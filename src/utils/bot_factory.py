@@ -15,12 +15,26 @@ class BotFactory:
         intents = discord.Intents().all()
         self.cache: dict = {}
         self.bot = commands.Bot(command_prefix=prefix, intents=intents)
-        self.event_handlers = EventHandler(self.bot, self.cache)
-        self.command_handlers = CommandHandler(self.bot, self.cache)
+        self.event_handlers = EventHandler(self.bot)
+        self.command_handlers = CommandHandler(self.bot)
+        self.bot.cache = self.cache
 
     def start(self):
+        initial_extensions = []
+        for root, directories, filenames in os.walk('src/cogs'):
+            for filename in filenames:
+                if filename.endswith(".py"):
+                    directory = root.split('/')[-1]
+                    cogs_directory = directory == 'cogs'
+                    extension_prefix = "..cogs" if cogs_directory else f"..cogs.{directory}"
+                    #import pdb; pdb.set_trace()
+                    initial_extensions.append(f"{extension_prefix}.{filename[:-3]}")
+        # Here we load our extensions(cogs) listed above in [initial_extensions].
+        #import pdb; pdb.set_trace()
+        for extension in initial_extensions:
+            self.bot.load_extension(name = extension, package = __package__)
         self.event_handlers.initialize()
         self.command_handlers.initialize()
-        self.bot.add_cog(Mirror(self.bot, self.cache))
-        self.bot.add_cog(Janitor(self.bot, self.cache))
+        #self.bot.add_cog(Mirror(self.bot, self.cache))
+        #self.bot.add_cog(Janitor(self.bot, self.cache))
         self.bot.run(os.getenv('BOT_KEY'))
