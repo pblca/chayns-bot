@@ -1,0 +1,3 @@
+actionable_words = [
+    'foo'
+]
