@@ -15,12 +15,29 @@ class BotFactory:
         intents = discord.Intents().all()
         self.cache: dict = {}
         self.bot = commands.Bot(command_prefix=prefix, intents=intents)
-        self.event_handlers = EventHandler(self.bot, self.cache)
-        self.command_handlers = CommandHandler(self.bot, self.cache)
+        self.event_handlers = EventHandler(self.bot)
+        self.command_handlers = CommandHandler(self.bot)
+        self.bot.cache = self.cache
 
     def start(self):
+        initial_extensions = []
+        # Go fetch py files in the nested directories within src/cogs
+        for root, directories, filenames in os.walk('src/cogs'):
+            for filename in filenames:
+                if filename.endswith(".py"):
+                    directory = root.split('/')[-1]
+                    cogs_directory = directory == 'cogs'
+
+                    # discord.py finds cogs with paths represented separated by dots
+                    # because we're in utils here we need to up a directory
+                    # so to load the janitor cog from src/cogs/janitor/janitor.py, it needs to look like ..cogs.janitor.janitor
+                    extension_prefix = "..cogs" if cogs_directory else f"..cogs.{directory}"
+                    initial_extensions.append(f"{extension_prefix}.{filename[:-3]}")
+
+        # Here we load our extensions(cogs) listed above in [initial_extensions].
+        for extension in initial_extensions:
+            self.bot.load_extension(name = extension, package = __package__)
+
         self.event_handlers.initialize()
         self.command_handlers.initialize()
-        self.bot.add_cog(Mirror(self.bot, self.cache))
-        self.bot.add_cog(Janitor(self.bot, self.cache))
         self.bot.run(os.getenv('BOT_KEY'))

@@ -7,9 +7,8 @@ from discord.ext.commands import Context
 
 class CommandHandler:
 
-    def __init__(self, bot, cache):
+    def __init__(self, bot):
         self.bot = bot
-        self.cache: dict = cache
 
     def initialize(self):
 
