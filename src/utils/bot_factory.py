@@ -1,10 +1,6 @@
 import os
 import discord
 from discord.ext import commands
-
-
-from src.cogs.mirror.mirror import Mirror
-from src.cogs.janitor.janitor import Janitor
 from src.commands.command_handlers import CommandHandler
 from src.events.event_handlers import EventHandler
 
@@ -30,7 +26,8 @@ class BotFactory:
 
                     # discord.py finds cogs with paths represented separated by dots
                     # because we're in utils here we need to up a directory
-                    # so to load the janitor cog from src/cogs/janitor/janitor.py, it needs to look like ..cogs.janitor.janitor
+                    # so to load the janitor cog from src/cogs/janitor/janitor.py, it needs to
+                    # look like ..cogs.janitor.janitor
                     extension_prefix = "..cogs" if cogs_directory else f"..cogs.{directory}"
                     initial_extensions.append(f"{extension_prefix}.{filename[:-3]}")
 
