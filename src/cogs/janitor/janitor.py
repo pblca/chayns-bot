@@ -7,9 +7,9 @@ from discord.ext.commands import Context
 
 class Janitor(commands.Cog):
 
-    def __init__(self, bot: discord.ext.commands.Bot, cache: dict):
+    def __init__(self, bot):
         self.bot: commands.Bot = bot
-        self.cache: dict = cache
+        self.cache: dict = bot.cache
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
@@ -29,4 +29,4 @@ class Janitor(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Janitor(bot, bot.cache))
+    bot.add_cog(Janitor(bot))

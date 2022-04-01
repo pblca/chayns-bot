@@ -6,9 +6,9 @@ from discord.ext.commands import Context
 
 class Mirror(commands.Cog):
 
-    def __init__(self, bot, cache: dict):
+    def __init__(self, bot):
         self.bot: commands.Bot = bot
-        self.cache: dict = cache
+        self.cache: dict = bot.cache
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
@@ -37,4 +37,4 @@ class Mirror(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Mirror(bot, bot.cache))
+    bot.add_cog(Mirror(bot))
