@@ -25,7 +25,7 @@ class BotFactory:
         for root, directories, filenames in os.walk('src/cogs'):
             for filename in filenames:
                 if filename.endswith(".py"):
-                    directory = root.split('/')[-1]
+                    directory = root.split('/')[-1].split('\\')[-1]
                     cogs_directory = directory == 'cogs'
 
                     # discord.py finds cogs with paths represented separated by dots
