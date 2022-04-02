@@ -1,9 +1,15 @@
+
+import os
+import time
 from collections import deque
 
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
+from discord import app_commands, Interaction
 
+from dotenv import load_dotenv
+load_dotenv()
 
 class Janitor(commands.Cog):
 
@@ -19,12 +25,17 @@ class Janitor(commands.Cog):
                 msg: discord.Message = await message.channel.fetch_message(current_cache['messages'].popleft())
                 await msg.delete()
 
-    @commands.command(name='janitor')
-    async def janitor(self, ctx: Context, limit=200):
+    @app_commands.command(name='janitor')
+    @app_commands.guilds(int(os.getenv('TEST_GUILD')))
+    async def janitor(self, interaction: Interaction, limit: int = 200):
         if 'janitor_cache' not in self.bot.cache.keys():
-            self.bot.cache['janitor_cache']: dict = {ctx.message.channel.id: {'limit': limit, 'messages': deque()}}
+            self.bot.cache['janitor_cache']: dict = {interaction.channel_id: {'limit': limit, 'messages': deque()}}
         else:
-            self.bot.cache['janitor_cache'][ctx.message.channel.id] = {'limit': limit, 'messages': deque()}
+            self.bot.cache['janitor_cache'][interaction.channel_id] = {'limit': limit, 'messages': deque()}
+        
+        await interaction.response.send_message("Janitor active.")
+        time.sleep(1.3)
+        await interaction.delete_original_message()
 
-def setup(bot):
-    bot.add_cog(Janitor(bot))
+async def setup(bot):
+    await bot.add_cog(Janitor(bot))

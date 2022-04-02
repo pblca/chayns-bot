@@ -1,12 +1,18 @@
-from linecache import cache
+import os
+import time
+
+from typing import Optional
+
 import discord
 from discord.ext import commands
-from discord.ext.commands import Context
+from discord import app_commands
 
+from dotenv import load_dotenv
+load_dotenv()
 
 class Mirror(commands.Cog):
 
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.Cog.listener()
@@ -17,22 +23,29 @@ class Mirror(commands.Cog):
                 f"[{message.created_at}] [{message.channel.name}] \n[{message.author.name}] : {message.content}")
 
     # This is mainly for testing
-    @commands.command(name='cache')
-    async def cache(self, ctx: Context, *args):
-        if len(args) == 0:
-            await ctx.channel.send(self.bot.cache)
-        elif len(args) == 1:
-            if args[0] in self.bot.cache.keys():
-                await ctx.channel.send(self.bot.cache[args[0]])
+    @app_commands.command(name='cache')
+    @app_commands.guilds(int(int(os.getenv('TEST_GUILD'))))
+    async def cache(self, interaction: discord.Interaction, key: Optional[str], value: Optional[str]):
+        if key:
+            if key not in self.bot.cache.keys():
+                return
+            if value:
+                self.bot.cache[args[0]] = ' '.join(str(arg) for arg in args[1:])
+            else:
+                await interaction.response.send_message(self.bot.cache[key])
         else:
-            self.bot.cache[args[0]] = ' '.join(str(arg) for arg in args[1:])
-
-    @commands.command(name='mirror')
-    async def mirror(self, ctx: Context):
+            await interaction.response.send_message(self.bot.cache)
+        
+    @app_commands.command(name='mirror')
+    @app_commands.guilds(int(os.getenv('TEST_GUILD')))
+    async def mirror(self, interaction: discord.Interaction, channel: discord.TextChannel):
         if 'mirror_cache' not in self.bot.cache.keys():
-            self.bot.cache['mirror_cache']: dict = {ctx.message.channel.id: ctx.message.channel_mentions[0].id}
+            self.bot.cache['mirror_cache']: dict = {interaction.channel_id: channel.id}
         else:
-            self.bot.cache['mirror_cache'][ctx.message.channel.id] = ctx.message.channel_mentions[0].id
+            self.bot.cache['mirror_cache'][interaction.channel_id] = channel.id
+        await interaction.response.send_message(f'Mirroring {interaction.channel_id} into {channel.mention}!')
+        time.sleep(1.3)
+        await interaction.delete_original_message()
 
-def setup(bot):
-    bot.add_cog(Mirror(bot))
+async def setup(bot):
+    await bot.add_cog(Mirror(bot))
