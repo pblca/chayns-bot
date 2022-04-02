@@ -10,6 +10,7 @@ from discord import app_commands
 from dotenv import load_dotenv
 load_dotenv()
 
+
 class Mirror(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
@@ -25,12 +26,12 @@ class Mirror(commands.Cog):
     # This is mainly for testing
     @app_commands.command(name='cache')
     @app_commands.guilds(int(int(os.getenv('TEST_GUILD'))))
-    async def cache(self, interaction: discord.Interaction, key: Optional[str], value: Optional[str]):
+    async def cache(self, interaction: discord.Interaction, key: Optional[str], val: Optional[str]):
         if key:
             if key not in self.bot.cache.keys():
                 return
-            if value:
-                self.bot.cache[args[0]] = ' '.join(str(arg) for arg in args[1:])
+            if val:
+                self.bot.cache[key] = ' '.join(str(arg) for arg in val[1:])
             else:
                 await interaction.response.send_message(self.bot.cache[key])
         else:

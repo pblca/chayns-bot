@@ -6,6 +6,8 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./
 
+RUN apk add git
 RUN pip install --no-cache-dir -r requirements.txt
+RUN apk del git #lel
 
 CMD exec python main.py

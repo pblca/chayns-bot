@@ -8,6 +8,7 @@ from discord import app_commands
 from dotenv import load_dotenv
 load_dotenv()
 
+
 class Watch(commands.Cog):
     
     def __init__(self, bot: commands.Bot):
@@ -60,6 +61,7 @@ class Watch(commands.Cog):
             ))
             time.sleep(2)
             await interaction.delete_original_message()
+
 
 async def setup(bot):
     await bot.add_cog(Watch(bot))

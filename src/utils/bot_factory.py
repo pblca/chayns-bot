@@ -1,15 +1,12 @@
+import asyncio
 import os
 import discord
-
 from discord.ext import commands
-from discord import app_commands
-
-from src.cogs.mirror.mirror import Mirror
-from src.cogs.janitor.janitor import Janitor
 from src.commands.command_handlers import CommandHandler
 from src.events.event_handlers import EventHandler
-
 from re import split as regsplit
+from db.setup import init
+
 
 class BotFactory:
 
@@ -21,6 +18,7 @@ class BotFactory:
         self.event_handlers = EventHandler(self.bot)
         self.command_handlers = CommandHandler(self.bot)
         self.bot.cache = self.cache
+        self.bot.engine = init()
 
     def start(self):
         initial_extensions = []
