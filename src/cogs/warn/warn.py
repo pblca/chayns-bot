@@ -20,6 +20,11 @@ class Warn(commands.Cog):
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
     async def warn(self, interaction: Interaction, user: discord.User, reason: str):
         pass
+    
+    @app_commands.command(name='view-warns', description='View a user\'s warns')
+    @app_commands.guilds(int(os.getenv('TEST_GUILD')))
+    async def view_warns(self, interaction: Interaction, user: discord.User):
+        pass
 
 async def setup(bot):
     await bot.add_cog(Warn(bot))
