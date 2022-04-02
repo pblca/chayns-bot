@@ -1,7 +1,7 @@
 import os
 import discord
 from discord.ext import commands
-
+from dotenv import load_dotenv
 
 from src.cogs.mirror.mirror import Mirror
 from src.cogs.janitor.janitor import Janitor
@@ -40,4 +40,5 @@ class BotFactory:
 
         self.event_handlers.initialize()
         self.command_handlers.initialize()
+        load_dotenv()
         self.bot.run(os.getenv('BOT_KEY'))

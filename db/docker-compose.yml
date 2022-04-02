@@ -1,5 +1,6 @@
 # docker compose up
-# hostname: host.docker.internal
+# hostname: host.docker.internal OR localhost
+# port: 5432
 # user: postgres
 # password: admin
 services:
