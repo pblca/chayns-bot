@@ -8,6 +8,7 @@ from src.cogs.janitor.janitor import Janitor
 from src.commands.command_handlers import CommandHandler
 from src.events.event_handlers import EventHandler
 
+from re import split as regsplit
 
 class BotFactory:
 
@@ -25,10 +26,9 @@ class BotFactory:
         for root, directories, filenames in os.walk('src/cogs'):
             for filename in filenames:
                 if filename.endswith(".py"):
-                    directory = root.split('/')[-1]
+                    directory = regsplit(r'[/\\]', root)[-1]
                     cogs_directory = directory == 'cogs'
 
-                    # discord.py finds cogs with paths represented separated by dots
                     # because we're in utils here we need to up a directory
                     # so to load the janitor cog from src/cogs/janitor/janitor.py, it needs to look like ..cogs.janitor.janitor
                     extension_prefix = "..cogs" if cogs_directory else f"..cogs.{directory}"
