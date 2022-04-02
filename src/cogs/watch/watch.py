@@ -58,7 +58,7 @@ class Watch(commands.Cog):
                 colour=0x0C74CC,
                 description=f'{user.name} was not on the watchlist.'
             ))
-            time.sleep(1.3)
+            time.sleep(2)
             await interaction.delete_original_message()
 
 async def setup(bot):

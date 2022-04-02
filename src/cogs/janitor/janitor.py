@@ -34,7 +34,7 @@ class Janitor(commands.Cog):
             self.bot.cache['janitor_cache'][interaction.channel_id] = {'limit': limit, 'messages': deque()}
         
         await interaction.response.send_message("Janitor active.")
-        time.sleep(1.3)
+        time.sleep(2)
         await interaction.delete_original_message()
 
 async def setup(bot):

@@ -44,7 +44,7 @@ class Mirror(commands.Cog):
         else:
             self.bot.cache['mirror_cache'][interaction.channel_id] = channel.id
         await interaction.response.send_message(f'Mirroring {interaction.channel_id} into {channel.mention}!')
-        time.sleep(1.3)
+        time.sleep(2)
         await interaction.delete_original_message()
 
 async def setup(bot):
