@@ -1,0 +1,11 @@
+# docker compose up
+# hostname: host.docker.internal
+# user: postgres
+# password: admin
+services:
+  db:
+    build:
+      context: .
+      dockerfile: db.Dockerfile
+    ports:
+      - "5432:5432"
