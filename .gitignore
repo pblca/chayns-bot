@@ -1,3 +1,14 @@
-.idea/
 .env
+
+# vscode
+.vscode/
+
+
+# pycharm 
+.idea/
 *.pyc
+
+# vim 
+*~
+*.swp
+*.swo
