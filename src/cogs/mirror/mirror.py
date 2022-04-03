@@ -2,9 +2,6 @@ import io
 import json
 import os
 import time
-
-from typing import Optional
-
 import discord
 from discord.ext import commands
 from discord import app_commands, File
