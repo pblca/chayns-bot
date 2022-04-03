@@ -3,7 +3,6 @@ from typing import Optional, Literal
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import bot
 from discord import app_commands, Interaction
 from dotenv import load_dotenv
 

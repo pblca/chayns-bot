@@ -31,7 +31,7 @@ class Mirror(commands.Cog):
     # This is mainly for testing
     @app_commands.command(name='get-cache')
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
-    async def get_cache(self, interaction: discord.Interaction, key: Optional[str], val: Optional[str]):
+    async def get_cache(self, interaction: discord.Interaction):
         txt = io.StringIO(json.dumps(cache, indent=2))
         file = File(fp=txt, filename="ok.txt")
         await interaction.response.send_message(file=file)
