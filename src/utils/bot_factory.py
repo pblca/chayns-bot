@@ -5,8 +5,6 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
-from src.cogs.mirror.mirror import Mirror
-from src.cogs.janitor.janitor import Janitor
 from src.commands.command_handlers import CommandHandler
 from src.events.event_handlers import EventHandler
 
