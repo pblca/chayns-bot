@@ -3,7 +3,6 @@ from typing import Optional, Literal
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import bot
 from discord import app_commands, Interaction
 from dotenv import load_dotenv
 
@@ -44,4 +43,4 @@ class Sync(commands.Cog):
 
 
 async def setup(_bot: commands.Bot):
-    await bot.add_cog(Sync(_bot))
+    await _bot.add_cog(Sync(_bot))

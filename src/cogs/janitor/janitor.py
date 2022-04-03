@@ -17,9 +17,8 @@ class Janitor(commands.Cog):
     def __init__(self, _bot: discord.ext.commands.Bot):
         self.bot: commands.Bot = _bot
 
-    @classmethod
     @commands.Cog.listener()
-    async def on_message(cls, message: discord.Message):
+    async def on_message(self, message: discord.Message):
         if 'janitor_cache' in cache and message.channel.id in cache['janitor_cache']:
             current_cache = cache['janitor_cache'][message.channel.id]
             current_cache['messages'].append(message.id)  # replace this with messsage_count
@@ -28,10 +27,9 @@ class Janitor(commands.Cog):
                     current_cache['messages'].popleft()  # likely don't need to store these ids in cache
                 await message.channel.purge(limit=current_cache['frequency'], check=lambda x: True)
 
-    @classmethod
     @app_commands.command(name="janitor", description="Enforces a set limit of message after command execution")
     @app_commands.guilds(int(int(os.getenv('TEST_GUILD'))))
-    async def janitor(cls, interaction: Interaction, limit: int = 200, frequency: int = 5):
+    async def janitor(self, interaction: Interaction, limit: int = 200, frequency: int = 5):
         if 'janitor_cache' not in cache:
             cache['janitor_cache']: dict = {
                 interaction.channel_id: {'limit': limit, 'frequency': frequency, 'messages': deque()}}
