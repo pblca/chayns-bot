@@ -1,3 +1,5 @@
+import io
+import json
 import os
 import time
 
@@ -5,7 +7,7 @@ from typing import Optional
 
 import discord
 from discord.ext import commands
-from discord import app_commands
+from discord import app_commands, File
 from dotenv import load_dotenv
 
 from data.cache import cache
@@ -27,23 +29,16 @@ class Mirror(commands.Cog):
                 f"[{message.created_at}] [{message.channel.name}] \n[{message.author.name}] : {message.content}")
 
     # This is mainly for testing
-    @classmethod
-    @app_commands.command(name='cache')
-    async def cache(cls, interaction: discord.Interaction, key: Optional[str], val: Optional[str]):
-        if key:
-            if key not in cache:
-                return
-            if val:
-                cache[key] = ' '.join(str(arg) for arg in val[1:])
-            else:
-                await interaction.response.send_message(cache[key])
-        else:
-            await interaction.response.send_message(cache)
+    @app_commands.command(name='get-cache')
+    @app_commands.guilds(int(os.getenv('TEST_GUILD')))
+    async def get_cache(self, interaction: discord.Interaction, key: Optional[str], val: Optional[str]):
+        txt = io.StringIO(json.dumps(cache, indent=2))
+        file = File(fp=txt, filename="ok.txt")
+        await interaction.response.send_message(file=file)
 
-    @classmethod
     @app_commands.command(name='mirror')
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
-    async def mirror(cls, interaction: discord.Interaction, channel: discord.TextChannel):
+    async def mirror(self, interaction: discord.Interaction, channel: discord.TextChannel):
         if 'mirror_cache' not in cache:
             cache['mirror_cache']: dict = {interaction.channel_id: channel.id}
         else:

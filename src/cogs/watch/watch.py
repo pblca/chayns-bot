@@ -17,9 +17,8 @@ class Watch(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @classmethod
     @commands.Cog.listener()
-    async def on_message(cls, message: discord.Message):
+    async def on_message(self, message: discord.Message):
         if 'watch_cache' in cache and message.author.id in cache['watch_cache']:
             destination_channel_id = cache['watch_cache'][message.author.id]
             images = message.attachments
@@ -36,10 +35,9 @@ class Watch(commands.Cog):
                     url=img.url) for img in images]
             ])
 
-    @classmethod
     @app_commands.command(name="watch")
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
-    async def watch(cls, interaction: discord.Interaction, user: discord.User, channel: discord.TextChannel):
+    async def watch(self, interaction: discord.Interaction, user: discord.User, channel: discord.TextChannel):
         if 'watch_cache' not in cache:
             cache['watch_cache']: dict = {user.id: channel.id}
         else:
@@ -52,10 +50,9 @@ class Watch(commands.Cog):
         time.sleep(3)
         await interaction.delete_original_message()
 
-    @classmethod
     @app_commands.command(name="unwatch")
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
-    async def unwatch(cls, interaction: discord.Interaction, user: discord.User):
+    async def unwatch(self, interaction: discord.Interaction, user: discord.User):
         if 'watch_cache' in cache and user.id in cache['watch_cache']:
             cache['watch_cache'].pop(user.id)
             await interaction.response.send_message(embed=discord.Embed(

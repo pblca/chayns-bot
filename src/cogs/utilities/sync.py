@@ -44,4 +44,4 @@ class Sync(commands.Cog):
 
 
 async def setup(_bot: commands.Bot):
-    await bot.add_cog(Sync(_bot))
+    await _bot.add_cog(Sync(_bot))
