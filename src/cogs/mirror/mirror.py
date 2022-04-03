@@ -17,7 +17,6 @@ class Mirror(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @classmethod
     @commands.Cog.listener()
     async def on_message(cls, message: discord.Message):
         if 'mirror_cache' in cache and message.channel.id in cache['mirror_cache']:
@@ -29,7 +28,7 @@ class Mirror(commands.Cog):
     @app_commands.command(name='get-cache')
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
     async def get_cache(self, interaction: discord.Interaction):
-        txt = io.StringIO(json.dumps(cache, indent=2))
+        txt = io.StringIO(json.dumps(cache, indent=2, default=str))
         file = File(fp=txt, filename="ok.txt")
         await interaction.response.send_message(file=file)
 
