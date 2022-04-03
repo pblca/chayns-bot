@@ -23,12 +23,14 @@ class Janitor(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         session: sqlalchemy.orm.Session = sessionmaker(bind=self.bot.engine)()
-        channels = session.query(Channel).all()
+        channels = filter(lambda _channel: _channel.janitor_limit is not None, session.query(Channel).all())
         cache['janitor_cache'] = {}
+        count = 0
         for channel in channels:
             cache['janitor_cache'][channel.id] = \
                 {'limit': channel.janitor_limit, 'frequency': channel.janitor_frequency, 'message_count': [0]}
-        print('startup hook')
+            count += 1
+        print(f'Janitor managing {count} channel(s)')
         session.close()
 
     @commands.Cog.listener()
