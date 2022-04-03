@@ -3,16 +3,17 @@ from typing import Optional, Literal
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import Context, bot
+from discord.ext.commands import bot
 from discord import app_commands, Interaction
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
 class Sync(commands.Cog):
 
-    def __init__(self, bot: commands.Bot):
-        self.bot: commands.Bot = bot
+    def __init__(self, _bot: commands.Bot):
+        self.bot: commands.Bot = _bot
 
     @app_commands.command(name='sync', description='synchronize command database')
     @app_commands.guilds(int(int(os.getenv('TEST_GUILD'))))
@@ -42,5 +43,5 @@ class Sync(commands.Cog):
         await interaction.response.send_message(f"Synced the tree to {fmt}/{len(guilds)} guilds.")
 
 
-async def setup(bot):
-    await bot.add_cog(Sync(bot))
+async def setup(_bot: commands.Bot):
+    await bot.add_cog(Sync(_bot))
