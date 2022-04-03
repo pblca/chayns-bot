@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, BigInteger
+from sqlalchemy import Column, ForeignKey, BigInteger, Integer, Boolean
 from sqlalchemy.orm import relationship
 from db.setup import Base
 
@@ -9,3 +9,6 @@ class Channel(Base):
     guild_id = Column(BigInteger, ForeignKey('guilds.id'))
     mirror_to_channel_id = Column(BigInteger, ForeignKey('channels.id'), nullable=True)
     guild = relationship("Guild", back_populates="channels")
+    janitor_limit = Column(Integer, nullable=True)
+    janitor_frequency = Column(Integer, nullable=True)
+    janitor_init_wipe = Column(Boolean, default=False)

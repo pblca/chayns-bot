@@ -18,7 +18,7 @@ class Mirror(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_message(cls, message: discord.Message):
+    async def on_message(self, message: discord.Message):
         if 'mirror_cache' in cache and message.channel.id in cache['mirror_cache']:
             mirror_channel_id = cache['mirror_cache'][message.channel.id]
             await message.guild.get_channel(mirror_channel_id).send(
