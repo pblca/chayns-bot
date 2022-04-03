@@ -1,24 +1,32 @@
 import asyncio
 import os
 import discord
+import sqlalchemy.orm
 from discord.ext import commands
+from sqlalchemy.orm import sessionmaker
+
+from db.models import Guild
 from src.commands.command_handlers import CommandHandler
 from src.events.event_handlers import EventHandler
 from re import split as regsplit
 from db.setup import init
+from data.cache import cache
 
 
 class BotFactory:
 
     def __init__(self, prefix: str):
         intents = discord.Intents().all()
-        self.cache: dict = {}
+        self.engine = init()
 
         self.bot = commands.Bot(command_prefix=prefix, intents=intents)
+
+        # I really don't like pinning attributes like this.
+        self.bot.engine = self.engine
+
+        cache['guild_ids'] = [guild.id for guild in self.bot.guilds]
         self.event_handlers = EventHandler(self.bot)
         self.command_handlers = CommandHandler(self.bot)
-        self.bot.cache = self.cache
-        self.bot.engine = init()
 
     def start(self):
         initial_extensions = []
@@ -29,14 +37,14 @@ class BotFactory:
                     directory = regsplit(r'[/\\]', root)[-1]
                     cogs_directory = directory == 'cogs'
 
-                    # because we're in utils here we need to up a directory
-                    # so to load the janitor cog from src/cogs/janitor/janitor.py, it needs to look like ..cogs.janitor.janitor
+                    # because we're in utils here we need to up a directory so to load the janitor cog from
+                    # src/cogs/janitor/janitor.py, it needs to look like ..cogs.janitor.janitor
                     extension_prefix = "..cogs" if cogs_directory else f"..cogs.{directory}"
                     initial_extensions.append(f"{extension_prefix}.{filename[:-3]}")
 
         # Here we load our extensions(cogs) listed above in [initial_extensions].
         for extension in initial_extensions:
-            asyncio.run(self.bot.load_extension(name = extension, package = __package__))
+            asyncio.run(self.bot.load_extension(name=extension, package=__package__))
 
         self.event_handlers.initialize()
         self.command_handlers.initialize()

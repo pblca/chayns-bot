@@ -6,6 +6,9 @@ from discord.ext import commands
 from discord import app_commands
 
 from dotenv import load_dotenv
+
+from data.cache import cache
+
 load_dotenv()
 
 
@@ -16,8 +19,8 @@ class Watch(commands.Cog):
     
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        if 'watch_cache' in self.bot.cache.keys() and message.author.id in self.bot.cache['watch_cache'].keys():
-            destination_channel_id = self.bot.cache['watch_cache'][message.author.id]
+        if 'watch_cache' in cache.keys() and message.author.id in cache['watch_cache'].keys():
+            destination_channel_id = cache['watch_cache'][message.author.id]
             imgs = message.attachments
             colour = message.author.colour
             await message.guild.get_channel(destination_channel_id).send(embeds=[discord.Embed(
@@ -31,10 +34,10 @@ class Watch(commands.Cog):
     @app_commands.command(name="watch")
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
     async def watch(self, interaction: discord.Interaction, user: discord.User, channel: discord.TextChannel):
-        if 'watch_cache' not in self.bot.cache.keys():
-            self.bot.cache['watch_cache']: dict = {user.id: channel.id}
+        if 'watch_cache' not in cache.keys():
+            cache['watch_cache']: dict = {user.id: channel.id}
         else:
-            self.bot.cache['watch_cache'][user.id] = channel.id
+            cache['watch_cache'][user.id] = channel.id
             
         await interaction.response.send_message(embed=discord.Embed(
             colour=0x0FB964,
@@ -46,8 +49,8 @@ class Watch(commands.Cog):
     @app_commands.command(name="unwatch")
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
     async def unwatch(self, interaction: discord.Interaction, user: discord.User):
-        if 'watch_cache' in self.bot.cache.keys() and user.id in self.bot.cache['watch_cache'].keys():
-            self.bot.cache['watch_cache'].pop(user.id)
+        if 'watch_cache' in cache.keys() and user.id in cache['watch_cache'].keys():
+            cache['watch_cache'].pop(user.id)
             await interaction.response.send_message(embed=discord.Embed(
                 colour=0x0C74CC,
                 description=f'**{user.name}** is no longer on the watchlist.'

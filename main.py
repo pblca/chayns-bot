@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 
 from src.utils.bot_factory import BotFactory
 
+
 def main():
     load_dotenv()
 
@@ -10,6 +11,7 @@ def main():
     bot = BotFactory(prefix or "!")
     
     bot.start()
+
 
 if __name__ == "__main__":
     main()

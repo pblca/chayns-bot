@@ -4,6 +4,7 @@ import time
 from typing import Optional
 
 import discord
+import sqlalchemy.orm
 from discord.ext import commands
 from discord import app_commands
 from sqlalchemy.orm import sessionmaker
@@ -19,13 +20,14 @@ class Testing(commands.Cog):
         self.bot: commands.Bot = bot
         self.engine = self.bot.engine
 
-    @app_commands.command(name='pull')
-    @app_commands.guilds(int(int(os.getenv('TEST_GUILD'))))
+    @app_commands.command(name='pull', description="example db pull from guilds")
+    @app_commands.guilds(int(os.getenv('TEST_GUILD')))
     async def pull(self, interaction: discord.Interaction):
         self.engine.connect()
-        session = sessionmaker(bind=self.engine)()
+        session: sqlalchemy.orm.Session = sessionmaker(bind=self.engine)()
         userdata = [guild.id for guild in session.query(Guild).all()]
-        await interaction.response.send_message(f'db guild id info{userdata}')
+        await interaction.response.send_message(f'db guild id info {userdata}')
+        session.close()
 
 
 async def setup(bot):
