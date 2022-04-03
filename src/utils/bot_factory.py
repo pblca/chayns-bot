@@ -1,14 +1,11 @@
 import asyncio
 import os
+from re import split as regsplit
 import discord
-import sqlalchemy.orm
 from discord.ext import commands
-from sqlalchemy.orm import sessionmaker
 
-from db.models import Guild
 from src.commands.command_handlers import CommandHandler
 from src.events.event_handlers import EventHandler
-from re import split as regsplit
 from db.setup import init
 from data.cache import cache
 
@@ -31,7 +28,7 @@ class BotFactory:
     def start(self):
         initial_extensions = []
         # Go fetch py files in the nested directories within src/cogs
-        for root, directories, filenames in os.walk('src/cogs'):
+        for root, _, filenames in os.walk('src/cogs'):
             for filename in filenames:
                 if filename.endswith(".py"):
                     directory = regsplit(r'[/\\]', root)[-1]
@@ -49,4 +46,3 @@ class BotFactory:
         self.event_handlers.initialize()
         self.command_handlers.initialize()
         self.bot.run(os.getenv('BOT_KEY'))
-

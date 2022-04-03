@@ -1,16 +1,14 @@
 import os
-import time
-
-from typing import Optional
 
 import discord
 import sqlalchemy.orm
 from discord.ext import commands
 from discord import app_commands
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
 from db.models import Guild
 
-from dotenv import load_dotenv
+
 load_dotenv()
 
 
