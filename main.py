@@ -9,7 +9,7 @@ def main():
 
     prefix = os.getenv('DISCORD_PREFIX')
     bot = BotFactory(prefix or "!")
-    
+
     bot.start()
 
 

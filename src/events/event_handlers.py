@@ -1,7 +1,6 @@
 import discord
 import sqlalchemy
 from discord.ext import commands
-from discord.ext.commands import Context
 from sqlalchemy.orm import sessionmaker
 
 from data.cache import cache
@@ -16,16 +15,18 @@ class EventHandler:
         self.engine: bot.engine
 
     def initialize(self):
+
         @self.bot.event
-        async def on_ready(*args):
-            print('Logged in as {0.user}'.format(self.bot))
+        async def on_ready():
+            print(f'Logged in as {self.bot.user}')
 
             print('Registering New Guilds ...')
             # Open an orm session to compare db data with bot data
             session: sqlalchemy.orm.Session = sessionmaker(bind=self.bot.engine)()
             cache['guild_ids'] = [guild.id for guild in self.bot.guilds]
             db_guild_ids = [guild.id for guild in session.query(Guild).all()]
-            guilds = [Guild(id=guild.id) for guild in filter(lambda guild: guild.id not in db_guild_ids, self.bot.guilds)]
+            guilds = [Guild(id=guild.id) for guild in
+                      filter(lambda guild: guild.id not in db_guild_ids, self.bot.guilds)]
 
             # Initial Command Import
             for guild in guilds:

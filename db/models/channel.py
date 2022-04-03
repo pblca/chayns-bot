@@ -1,11 +1,9 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, BigInteger
+from sqlalchemy import Column, ForeignKey, BigInteger
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-from . import Base
 
-
-class Channel(Base):
-
+class Channel(declarative_base()):
     __tablename__ = 'channels'
     id = Column(BigInteger, primary_key=True)
     guild_id = Column(BigInteger, ForeignKey('guilds.id'))
