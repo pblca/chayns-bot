@@ -1,10 +1,13 @@
+import io
+import json
 import os
 from typing import Optional, Literal
-
 import discord
 from discord.ext import commands
-from discord import app_commands, Interaction
+from discord import app_commands, Interaction, File
 from dotenv import load_dotenv
+
+from data.cache import cache
 
 load_dotenv()
 
@@ -40,6 +43,14 @@ class Sync(commands.Cog):
                 fmt += 1
 
         await interaction.response.send_message(f"Synced the tree to {fmt}/{len(guilds)} guilds.")
+
+    # This is mainly for testing
+    @app_commands.command(name='get-cache')
+    @app_commands.guilds(int(os.getenv('TEST_GUILD')))
+    async def get_cache(self, interaction: discord.Interaction):
+        txt = io.StringIO(json.dumps(cache, indent=2, default=str))
+        file = File(fp=txt, filename="ok.txt")
+        await interaction.response.send_message(file=file)
 
 
 async def setup(_bot: commands.Bot):
