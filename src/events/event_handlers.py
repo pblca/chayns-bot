@@ -26,19 +26,22 @@ class EventHandler:
             cache['guild_ids'] = [guild.id for guild in self.bot.guilds]
             db_guild_ids = [guild.id for guild in session.query(Guild).all()]
             guilds = [Guild(id=guild.id) for guild in filter(lambda guild: guild.id not in db_guild_ids, self.bot.guilds)]
+
+            # Initial Command Import
+            for guild in guilds:
+                try:
+                    info = await self.bot.tree.sync(guild=discord.Object(guild.id))
+                    print(f'-- {guild.id}\n')
+                    for inf in info:
+                        print(f'----- Updated {inf.name}')
+
+                except discord.HTTPException as ex:
+                    print(ex)
+
             session.bulk_save_objects(guilds)
             session.commit()
             session.close()
             print(f'finished ( added {len(guilds)} ) ')
-
-            # Updating Commands!
-            for guild in self.bot.guilds:
-                try:
-                    info = await self.bot.tree.sync(guild=discord.Object(guild.id))
-                    print(f'Updated {len(info)} commands for \n-- {guild.name}')
-
-                except discord.HTTPException as ex:
-                    print(ex)
 
         @self.bot.event
         async def on_message(message: discord.Message):
