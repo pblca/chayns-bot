@@ -1,3 +1,4 @@
+import datetime
 import os
 import time
 import discord
@@ -33,8 +34,17 @@ class Mirror(commands.Cog):
     async def on_message(self, message: discord.Message):
         if 'mirror_cache' in cache and message.channel.id in cache['mirror_cache']:
             mirror_channel_id = cache['mirror_cache'][message.channel.id]
+            embed = discord.Embed(color=0xFFFFFF)
+
+            embed.set_footer(icon_url=message.author.avatar.url,
+                             text=message.author.name)
+
+            embed.add_field(name="[POST]", value=message.content)
+            embed.timestamp = datetime.datetime.utcnow()
             await message.guild.get_channel(mirror_channel_id).send(
-                f"[{message.created_at}] [{message.channel.name}] \n[{message.author.name}] : {message.clean_content}")
+                embed=embed,
+                suppress_embeds=False
+            )
 
     @app_commands.command(name='mirror')
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))

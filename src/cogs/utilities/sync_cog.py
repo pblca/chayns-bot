@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 
 from data.cache import cache
 
+from data.cache import cache
+from src.utils.delete_view import DeleteView
+
 load_dotenv()
 
 
@@ -49,8 +52,8 @@ class Sync(commands.Cog):
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
     async def get_cache(self, interaction: discord.Interaction):
         txt = io.StringIO(json.dumps(cache, indent=2, default=str))
-        file = File(fp=txt, filename="ok.txt")
-        await interaction.response.send_message(file=file)
+        file = File(fp=txt, filename="cache.txt")
+        await interaction.response.send_message(file=file, view=DeleteView())
 
 
 async def setup(_bot: commands.Bot):
