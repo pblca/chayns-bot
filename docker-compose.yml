@@ -1,8 +1,4 @@
-# docker compose up
-# hostname: host.docker.internal OR localhost
-# port: 5432
-# user: postgres
-# password: admin
+version: "3.9"
 services:
   db:
     image: postgres:14.2-alpine
