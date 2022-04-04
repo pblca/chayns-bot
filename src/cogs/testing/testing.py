@@ -1,13 +1,12 @@
 import os
-
 import discord
 import sqlalchemy.orm
 from discord.ext import commands
 from discord import app_commands
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
-from db.models import Guild
-
+from db.models import Guild, Channel
+from src.utils.delete_view import DeleteView
 
 load_dotenv()
 
@@ -23,8 +22,8 @@ class Testing(commands.Cog):
     async def pull(self, interaction: discord.Interaction):
         self.engine.connect()
         session: sqlalchemy.orm.Session = sessionmaker(bind=self.engine)()
-        userdata = [guild.id for guild in session.query(Guild).all()]
-        await interaction.response.send_message(f'db guild id info {userdata}')
+        userdata = [channel for channel in session.query(Channel).all()]
+        await interaction.response.send_message(f'db guild id info {userdata}', view=DeleteView())
         session.close()
 
     @app_commands.command(name='bing', description="fuck ya life")
