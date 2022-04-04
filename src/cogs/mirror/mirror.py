@@ -2,7 +2,7 @@ import os
 import time
 import discord
 from discord.ext import commands
-from discord import app_commands, File
+from discord import app_commands
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session, sessionmaker
 
