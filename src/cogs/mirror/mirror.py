@@ -34,7 +34,7 @@ class Mirror(commands.Cog):
         if 'mirror_cache' in cache and message.channel.id in cache['mirror_cache']:
             mirror_channel_id = cache['mirror_cache'][message.channel.id]
             await message.guild.get_channel(mirror_channel_id).send(
-                f"[{message.created_at}] [{message.channel.name}] \n[{message.author.name}] : {message.content}")
+                f"[{message.created_at}] [{message.channel.name}] \n[{message.author.name}] : {message.clean_content}")
 
     @app_commands.command(name='mirror')
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
