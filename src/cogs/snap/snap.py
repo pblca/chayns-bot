@@ -18,10 +18,9 @@ class Snap(commands.Cog):
     async def snap(self, interaction: discord.Interaction, channel: discord.TextChannel = None, length: int = 200):
         messages = await channel.history(limit=length).flatten()
         message_return = []
-        for message in messages:
+        for message in reversed(messages):
             message_return.append(f"{message.created_at} : {message.author.name} : {message.content}")
 
-        message_return.reverse()
         txt = io.StringIO("\n".join(message_return))
         await interaction.user.send(file=File(fp=txt, filename=f"{channel}-{interaction.created_at}.txt"))
 
