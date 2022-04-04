@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:14.2-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+  cache:
+    image: redis:6.2.6-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server
