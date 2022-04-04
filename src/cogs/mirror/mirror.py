@@ -51,6 +51,8 @@ class Mirror(commands.Cog):
         match cache:
             case {'mirror_cache': _}:
                 cache['mirror_cache'][interaction.channel_id] = channel.id
+                db_channel.mirror_to_channel_id = channel.id
+                session.commit()
             case _:
                 cache['mirror_cache']: dict = {interaction.channel_id, channel.id}
                 db_channel.mirror_to_channel_id = channel.id
