@@ -4,7 +4,6 @@ from re import split as regsplit
 import discord
 from discord.ext import commands
 
-from src.commands.command_handlers import CommandHandler
 from src.events.event_handlers import EventHandler
 from db.setup import init
 from data.cache import cache
@@ -23,7 +22,6 @@ class BotFactory:
 
         cache['guild_ids'] = [guild.id for guild in self.bot.guilds]
         self.event_handlers = EventHandler(self.bot)
-        self.command_handlers = CommandHandler(self.bot)
 
     def start(self):
         initial_extensions = []

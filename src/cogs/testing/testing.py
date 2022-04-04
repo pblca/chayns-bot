@@ -27,6 +27,11 @@ class Testing(commands.Cog):
         await interaction.response.send_message(f'db guild id info {userdata}')
         session.close()
 
+    @app_commands.command(name='bing', description="fuck ya life")
+    @app_commands.guilds(int(os.getenv('TEST_GUILD')))
+    async def bing(self, interaction: discord.Interaction):
+        await interaction.response.send_message('bong')
+
 
 async def setup(bot):
     await bot.add_cog(Testing(bot))
