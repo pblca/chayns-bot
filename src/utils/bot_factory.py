@@ -38,8 +38,6 @@ class BotFactory:
                     if f'{directory}_cog' == f'{filename[:-3]}':
                         initial_extensions.append(f"{extension_prefix}.{filename[:-3]}")
 
-        print(initial_extensions)
-
         # Here we load our extensions(cogs) listed above in [initial_extensions].
         for extension in initial_extensions:
             asyncio.run(self.bot.load_extension(name=extension, package=__package__))
