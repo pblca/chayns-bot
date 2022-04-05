@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from data.cache import cache
 from db.models import Channel
+from src.utils.connectors import r
 
 load_dotenv()
 
@@ -22,6 +23,7 @@ class Mirror(commands.Cog):
     async def on_ready(self):
         session: Session = sessionmaker(bind=self.bot.engine)()
         channels = filter(lambda _channel: _channel.mirror_to_channel_id is not None, session.query(Channel).all())
+        #r.hmset('mirror_cache', {})
         cache['mirror_cache'] = {}
         count = 0
         for channel in channels:
@@ -40,7 +42,7 @@ class Mirror(commands.Cog):
                              text=message.author.name)
 
             embed.add_field(name="[POST]", value=message.content)
-            embed.timestamp = datetime.datetime.utcnow()
+            embed.timestamp = datetime.datetime.now()
             await message.guild.get_channel(mirror_channel_id).send(
                 embed=embed,
                 suppress_embeds=False
@@ -51,6 +53,15 @@ class Mirror(commands.Cog):
     async def mirror(self, interaction: discord.Interaction, channel: discord.TextChannel):
         session: Session = sessionmaker(bind=self.bot.engine)()
         db_channel = session.query(Channel).get(interaction.channel_id)
+        mirror_channel = session.query(Channel).get(channel.id)
+
+        if mirror_channel is None:
+            mirror_channel = Channel(id=channel.id,
+                                     guild_id=interaction.guild_id,
+                                     mirror_to_channel_id=None)
+            session.add(mirror_channel)
+            session.commit()
+
         if db_channel is None:
             db_channel = Channel(id=interaction.channel_id,
                                  guild_id=interaction.guild_id,
