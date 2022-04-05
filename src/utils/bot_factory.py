@@ -35,7 +35,7 @@ class BotFactory:
                     # because we're in utils here we need to up a directory so to load the janitor cog from
                     # src/cogs/janitor/janitor_cog.py, it needs to look like ..cogs.janitor.janitor_cog
                     extension_prefix = "..cogs" if cogs_directory else f"..cogs.{directory}"
-                    if f'{directory}_cog' == f'{filename[:-3]}':
+                    if "_cog" in filename[:-3]:
                         initial_extensions.append(f"{extension_prefix}.{filename[:-3]}")
 
         # Here we load our extensions(cogs) listed above in [initial_extensions].
