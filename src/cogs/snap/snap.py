@@ -1,5 +1,7 @@
 import io
 import os
+from collections import deque
+
 import discord
 from discord.ext import commands
 from discord import app_commands, File
@@ -16,12 +18,12 @@ class Snap(commands.Cog):
     @app_commands.command(name='snap', description='Snapshot a text channel')
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
     async def snap(self, interaction: discord.Interaction, channel: discord.TextChannel = None, length: int = 200):
-        messages = await channel.history(limit=length).flatten()
-        message_return = []
-        for message in reversed(messages):
-            message_return.append(f"{message.created_at} : {message.author.name} : {message.content}")
+        messages = deque()
 
-        txt = io.StringIO("\n".join(message_return))
+        async for message in channel.history(limit=length):
+            messages.appendleft(f"{message.created_at} : {message.author.name} : {message.content}")
+
+        txt = io.StringIO("\n".join(messages))
         await interaction.user.send(file=File(fp=txt, filename=f"{channel}-{interaction.created_at}.txt"))
 
 
