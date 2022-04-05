@@ -10,7 +10,9 @@ from dotenv import load_dotenv
 from data.cache import cache
 
 from data.cache import cache
+from src.utils.connectors import r
 from src.utils.delete_view import DeleteView
+from src.utils.misc import str2int
 
 load_dotenv()
 
@@ -51,7 +53,13 @@ class Sync(commands.Cog):
     @app_commands.command(name='get-cache')
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
     async def get_cache(self, interaction: discord.Interaction):
-        txt = io.StringIO(json.dumps(cache, indent=2, default=str))
+        keys = r.keys('*')
+        d = {}
+        for x in filter(lambda n: n not in 'redis_test', keys):
+            val = r.get(x)
+            d[x] = json.loads(val, object_hook=str2int)
+
+        txt = io.StringIO(json.dumps(d, indent=2, default=str))
         file = File(fp=txt, filename="cache.txt")
         await interaction.response.send_message(file=file, view=DeleteView())
 

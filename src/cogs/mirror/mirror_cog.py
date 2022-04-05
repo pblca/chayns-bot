@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import time
 import discord
@@ -10,6 +11,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from data.cache import cache
 from db.models import Channel
 from src.utils.connectors import r
+from src.utils.misc import str2int
 
 load_dotenv()
 
@@ -23,30 +25,41 @@ class Mirror(commands.Cog):
     async def on_ready(self):
         session: Session = sessionmaker(bind=self.bot.engine)()
         channels = filter(lambda _channel: _channel.mirror_to_channel_id is not None, session.query(Channel).all())
-        #r.hmset('mirror_cache', {})
-        cache['mirror_cache'] = {}
+        r.set('mirror_cache', json.dumps({}))
         count = 0
         for channel in channels:
-            cache['mirror_cache'][channel.id] = channel.mirror_to_channel_id
+            mapping = json.loads(r.get('mirror_cache'))
+            mapping[channel.id] = channel.mirror_to_channel_id
+            r.set('mirror_cache', json.dumps(mapping))
             count += 1
+        print(json.loads(r.get('mirror_cache')))
         print(f'Mirror managing {count} channel(s)')
         session.close()
 
     @commands.Cog.listener()
+    async def on_message_update(self, message: discord.Message):
+        mapping = json.loads(r.get('mirror_cache'), object_hook=str2int)
+
+    @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        if 'mirror_cache' in cache and message.channel.id in cache['mirror_cache']:
-            mirror_channel_id = cache['mirror_cache'][message.channel.id]
-            embed = discord.Embed(color=0xFFFFFF)
+        mapping = json.loads(r.get('mirror_cache'), object_hook=str2int)
 
-            embed.set_footer(icon_url=message.author.avatar.url,
-                             text=message.author.name)
+        match mapping:
+            case {message.channel.id: mirror_channel_id}:
+                embed = discord.Embed(color=0xFFFFFF)
 
-            embed.add_field(name="[POST]", value=message.content)
-            embed.timestamp = datetime.datetime.now()
-            await message.guild.get_channel(mirror_channel_id).send(
-                embed=embed,
-                suppress_embeds=False
-            )
+                embed.set_footer(icon_url=message.author.avatar.url,
+                                 text=message.author.name)
+
+                embed.add_field(name=f"[post] from #{message.channel.name}", value=message.content)
+                embed.timestamp = datetime.datetime.now()
+                n = await message.guild.get_channel(mirror_channel_id).send(
+                    embed=embed,
+                    suppress_embeds=False,
+                )
+                update_mapping = json.loads(r.get('mirror_update_cache'))
+                update_mapping[message.id] = n.id
+                r.set('mirror_update_cache', json.dumps(update_mapping))
 
     @app_commands.command(name='mirror')
     @app_commands.guilds(int(os.getenv('TEST_GUILD')))
@@ -69,15 +82,11 @@ class Mirror(commands.Cog):
             session.add(db_channel)
             session.commit()
 
-        match cache:
-            case {'mirror_cache': _}:
-                cache['mirror_cache'][interaction.channel_id] = channel.id
-                db_channel.mirror_to_channel_id = channel.id
-                session.commit()
-            case _:
-                cache['mirror_cache']: dict = {interaction.channel_id, channel.id}
-                db_channel.mirror_to_channel_id = channel.id
-                session.commit()
+        mapping = json.loads(r.get('mirror_cache'), object_hook=str2int)
+        mapping[interaction.channel_id] = channel.id
+        r.set('mirror_cache', json.dumps(mapping))
+        db_channel.mirror_to_channel_id = channel.id
+        session.commit()
         session.close()
 
         await interaction.response.send_message(f'Mirroring {interaction.channel_id} into {channel.mention}!')
