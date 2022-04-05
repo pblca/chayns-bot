@@ -33,14 +33,14 @@ class BotFactory:
                     cogs_directory = directory == 'cogs'
 
                     # because we're in utils here we need to up a directory so to load the janitor cog from
-                    # src/cogs/janitor/janitor.py, it needs to look like ..cogs.janitor.janitor
+                    # src/cogs/janitor/janitor_cog.py, it needs to look like ..cogs.janitor.janitor_cog
                     extension_prefix = "..cogs" if cogs_directory else f"..cogs.{directory}"
-                    initial_extensions.append(f"{extension_prefix}.{filename[:-3]}")
+                    if f'{directory}_cog' == f'{filename[:-3]}':
+                        initial_extensions.append(f"{extension_prefix}.{filename[:-3]}")
 
         # Here we load our extensions(cogs) listed above in [initial_extensions].
         for extension in initial_extensions:
             asyncio.run(self.bot.load_extension(name=extension, package=__package__))
 
         self.event_handlers.initialize()
-        self.command_handlers.initialize()
         self.bot.run(os.getenv('BOT_KEY'))
