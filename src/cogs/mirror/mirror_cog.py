@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from data.cache import cache
 from db.models import Channel
+from src.cogs.mirror.embed_builder import get_embeds_from_string
 from src.utils.connectors import r
 from src.utils.misc import str2int
 
@@ -44,8 +45,8 @@ class Mirror(commands.Cog):
             embed.add_field(name=f"[post] from #{message.channel.name}", value=message.content)
             embed.timestamp = datetime.datetime.now()
             n = await message.guild.get_channel(int(mirror_channel_id)).send(
-                content=f'```\n{message.author.nick or message.author.name} from {message.channel.name} \n {message.clean_content}\n```',
-                suppress_embeds=False,
+                embeds=get_embeds_from_string(message.clean_content, message, False, False),
+                suppress_embeds=False
             )
             r.hset(f'mirror_update_cache:{message.id}', 'mirror_message_id', n.id)
             r.hset(f'mirror_update_cache:{message.id}', 'mirror_channel_id', mirror_channel_id)

@@ -7,6 +7,7 @@ from discord.ext import commands
 from discord import TextChannel
 from discord import Thread
 
+from src.cogs.mirror.embed_builder import get_embeds_from_string
 from src.utils.connectors import r
 from src.utils.misc import str2int
 
@@ -15,9 +16,23 @@ class MirrorUpdate(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    # @commands.Cog.listener()
-    # async def on_ready(self):
-    # r.hset('mirror_update_cache:')
+    @commands.Cog.listener()
+    async def on_message_delete(self, deleted_message: discord.Message):
+        if (delete_data := r.hgetall(f'mirror_update_cache:{deleted_message.id}')) \
+                and deleted_message.author.id != self.bot.user.id:
+            mirror_channel = await self.bot.fetch_channel(delete_data['mirror_channel_id'])
+            mirror_message = await mirror_channel.fetch_message(delete_data['mirror_message_id'])
+            if 'mirror_update_thread_id' in delete_data and (thread_id := delete_data['mirror_update_thread_id']):
+                thread = mirror_channel.get_thread(int(thread_id))
+                await thread.send(embeds=mirror_message.embeds)
+            else:
+                thread = await mirror_message.create_thread(name=f'Message Edit Log', reason='an edit was made to a '
+                                                                                             'mirrored channel post')
+                await thread.send(embeds=mirror_message.embeds)
+                r.hset(f'mirror_update_cache:{mirror_message.id}', 'mirror_update_thread_id', thread.id)
+
+            await mirror_message.edit(
+                embeds=get_embeds_from_string("(deleted)", deleted_message, True, True))
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
@@ -25,21 +40,17 @@ class MirrorUpdate(commands.Cog):
                 and before.author.id != self.bot.user.id:
             mirror_channel = await self.bot.fetch_channel(update_data['mirror_channel_id'])
             mirror_message = await mirror_channel.fetch_message(update_data['mirror_message_id'])
-            embed = discord.Embed(color=0xFFFFFF)
-            embed.set_footer(icon_url=after.author.avatar.url,
-                             text=after.author.name)
-            embed.add_field(name=f"[edit] from #{after.channel.name}", value=after.clean_content)
-            embed.timestamp = datetime.datetime.now()
             if 'mirror_update_thread_id' in update_data and (thread_id := update_data['mirror_update_thread_id']):
                 thread = mirror_channel.get_thread(int(thread_id))
-                await thread.send(mirror_message.content)
+                await thread.send(embeds=mirror_message.embeds)
             else:
-                thread = await mirror_message.create_thread(name=f'_/--Update Log-==', reason='an edit was made to a '
+                thread = await mirror_message.create_thread(name=f'Message Edit Log', reason='an edit was made to a '
                                                                                               'mirrored channel post')
-                await thread.send(mirror_message.content)
+                await thread.send(embeds=mirror_message.embeds)
                 r.hset(f'mirror_update_cache:{before.id}', 'mirror_update_thread_id', thread.id)
 
-            await mirror_message.edit(content=f'```\n{after.author.nick} from {after.channel.name} \n{after.clean_content}\n```')
+            await mirror_message.edit(
+                embeds=get_embeds_from_string(after.clean_content, after, True))
 
 
 async def setup(bot: commands.Bot):
