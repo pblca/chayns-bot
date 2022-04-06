@@ -72,9 +72,7 @@ class Mirror(commands.Cog):
             session.add(db_channel)
             session.commit()
 
-        mapping = json.loads(r.get('mirror_cache'), object_hook=str2int)
-        mapping[interaction.channel_id] = channel.id
-        r.set('mirror_cache', json.dumps(mapping))
+        r.set(f'mirror_cache:{interaction.channel_id}', channel.id)
         db_channel.mirror_to_channel_id = channel.id
         session.commit()
         session.close()
