@@ -44,8 +44,7 @@ class Mirror(commands.Cog):
             embed.add_field(name=f"[post] from #{message.channel.name}", value=message.content)
             embed.timestamp = datetime.datetime.now()
             n = await message.guild.get_channel(int(mirror_channel_id)).send(
-                #embed=embed,
-                content=f'```\n{message.author.nick} from {message.channel.name} \n {message.clean_content}\n```',
+                content=f'```\n{message.author.nick or message.author.name} from {message.channel.name} \n {message.clean_content}\n```',
                 suppress_embeds=False,
             )
             r.hset(f'mirror_update_cache:{message.id}', 'mirror_message_id', n.id)

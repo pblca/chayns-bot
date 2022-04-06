@@ -41,7 +41,7 @@ class Janitor(commands.Cog):
                 count[0] += 1
                 if count[0] >= current_cache['limit']:
                     count[0] -= current_cache['frequency']
-                    await message.channel.purge(limit=current_cache['frequency'], check=lambda x: True)
+                    await message.channel.purge(limit=current_cache['frequency'], check=lambda x: True, oldest_first=True)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
