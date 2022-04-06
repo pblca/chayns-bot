@@ -49,20 +49,6 @@ class Sync(commands.Cog):
 
         await interaction.response.send_message(f"Synced the tree to {fmt}/{len(guilds)} guilds.")
 
-    # This is mainly for testing
-    @app_commands.command(name='get-cache')
-    @app_commands.guilds(int(os.getenv('TEST_GUILD')))
-    async def get_cache(self, interaction: discord.Interaction):
-        keys = r.keys('*')
-        d = {}
-        for x in filter(lambda n: n not in 'redis_test', keys):
-            val = r.get(x)
-            d[x] = json.loads(val, object_hook=str2int)
-
-        txt = io.StringIO(json.dumps(d, indent=2, default=str))
-        file = File(fp=txt, filename="cache.txt")
-        await interaction.response.send_message(file=file, view=DeleteView())
-
 
 async def setup(_bot: commands.Bot):
     await _bot.add_cog(Sync(_bot))
