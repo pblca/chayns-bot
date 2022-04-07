@@ -14,3 +14,9 @@ services:
     ports:
       - '6379:6379'
     command: redis-server
+  elk:
+    image: sebp/elk
+    ports:
+      - "5601:5601"
+      - "9200:9200"
+      - "5044:5044"
