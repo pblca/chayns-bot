@@ -13,7 +13,7 @@ Bleeding Edge Moderation Bot
 - run `python main.py`
 
 #### Elk
-Windows
+- Windows ( If experiencing `vm.max_map_count` error )
   - open powershell
   - run `wsl -d docker-desktop`
   - run `sysctl -w vm.max_map_count=262144`
